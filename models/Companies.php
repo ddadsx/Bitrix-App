@@ -8,7 +8,8 @@
             $this->cnpj = $cnpj;
         }
 
-        function save($hook){
+        function save(){
+            $function = HOOK.'crm.company.add.json';
             $data = http_build_query(array(
                 'fields' => array(
                     "TITLE" => $this->companyName,
@@ -21,38 +22,54 @@
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
             ));
 
-            return json_decode($this->execute_curl($hook, $data));
+            return json_decode($this->execute_curl($function, $data));
         }
 
-        static function delete($hook,$id){
+        static function delete($id){
+            $function = HOOK.'crm.company.delete.json';
             $data = http_build_query(array(
                 "ID" => $id,
                 ));
             
-            return json_decode(Company::execute_curl($hook, $data));
+            return json_decode(Company::execute_curl($function, $data));
         }
 
-        static function findAll($hook){
+        static function findAll(){
+            $function = HOOK.'crm.company.list.json';
             $data = http_build_query(array(
                 'filter' => array(),
-                'select' => ["ID", "TITLE", "BANKING_DETAILS"]
+                'select' => ["ID", "TITLE", "BANKING_DETAILS", "REVENUE"]
                 ));
             
-            return json_decode(Company::execute_curl($hook, $data));
+            return json_decode(Company::execute_curl($function, $data));
         }
 
-        static function find($hook,$cnpj){
+        static function findByCnpj($cnpj){
+            $function = HOOK.'crm.company.list.json';
             $data = http_build_query(array(
                 'filter' => array(
                     "BANKING_DETAILS" => $cnpj,
                 ),
-                'select' => ["ID", "TITLE", "BANKING_DETAILS"]
+                'select' => ["ID", "TITLE", "BANKING_DETAILS", "REVENUE"]
                 ));
             
-            return json_decode(Company::execute_curl($hook, $data));
+            return json_decode(Company::execute_curl($function, $data));
         }
 
-        function addContact($hook,$companyId,$contactId){
+        static function findById($id){
+            $function = HOOK.'crm.company.list.json';
+            $data = http_build_query(array(
+                'filter' => array(
+                    "ID" => $id,
+                ),
+                'select' => ["ID", "TITLE", "BANKING_DETAILS", "REVENUE"]
+                ));
+            
+            return json_decode(Company::execute_curl($function, $data));
+        }
+
+        function addContact($companyId,$contactId){
+            $function = HOOK.'crm.company.contact.add.json';
             $data = http_build_query(array(
                 "ID" => $companyId,
                 'fields' => array(
@@ -60,11 +77,19 @@
                 ),
                 ));
             
-            return json_decode(Company::execute_curl($hook, $data));
+            return json_decode(Company::execute_curl($function, $data));
         }
 
-        private static function execute_curl($hook, $data) {
-            $ch = curl_init($hook);
+        static function addRevenue($companyId,$amount){
+            //Company::findById()
+
+            //buscar empresa por id, para receber o revenue atual
+            //somar o amount com o revenue 
+            //atualizar revenue da empresa
+        }
+
+        private static function execute_curl($function, $data) {
+            $ch = curl_init($function);
 
             curl_setopt_array($ch, array(
                 CURLOPT_SSL_VERIFYPEER => false,

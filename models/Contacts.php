@@ -17,7 +17,8 @@
             $this->cnpj = $cnpj;
         }
 
-        function save($hook){
+        function save(){
+            $function = HOOK.'crm.contact.add.json';
             $data = http_build_query(array(
                 'fields' => array(
                 "NAME" => $this->name,
@@ -34,18 +35,20 @@
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
                 ));
 
-            return json_decode($this->execute_curl($hook, $data));
+            return json_decode($this->execute_curl($function, $data));
         }
 
-        static function delete($hook,$id){
+        static function delete($id){
+            $function = HOOK.'crm.contact.delete.json';
             $data = http_build_query(array(
                 "ID" => $id,
                 ));
             
-            return json_decode(Contact::execute_curl($hook, $data));
+            return json_decode(Contact::execute_curl($function, $data));
         }
 
-        function update($hook,$id){
+        function update($id){
+            $function = HOOK.'crm.contact.update.json';
             $data = http_build_query(array(
                 "ID" => $id,
                 'fields' => array(
@@ -62,19 +65,21 @@
                 ),
                 ));
             
-            return json_decode(Contact::execute_curl($hook, $data));
+            return json_decode(Contact::execute_curl($function, $data));
         }
 
-        static function findAll($hook){
+        static function findAll(){
+            $function = HOOK.'crm.contact.list.json';
             $data = http_build_query(array(
                 'filter' => array(),
                 'select' => ["ID", "NAME", "LAST_NAME", "UF_CRM_1581540845", "PHONE", "EMAIL"]
                 ));
             
-            return json_decode(Contact::execute_curl($hook, $data));
+            return json_decode(Contact::execute_curl($function, $data));
         }
 
-        static function find($hook,$cpf){
+        static function findByCpf($cpf){
+            $function = HOOK.'crm.contact.list.json';
             $data = http_build_query(array(
                 'filter' => array(
                     "UF_CRM_1581540845" => $cpf,
@@ -82,10 +87,11 @@
                 'select' => ["ID", "NAME", "LAST_NAME", "UF_CRM_1581540845", "PHONE", "EMAIL"]
                 ));
             
-            return json_decode(Contact::execute_curl($hook, $data));
+            return json_decode(Contact::execute_curl($function, $data));
         }
 
-        function addCompany($hook,$contactId,$companyId){
+        function addCompany($contactId,$companyId){
+            $function = HOOK.'crm.contact.company.add.json';
             $data = http_build_query(array(
                 "ID" => $contactId,
                 'fields' => array(
@@ -93,11 +99,11 @@
                 ),
                 ));
             
-            return json_decode(Contact::execute_curl($hook, $data));
+            return json_decode(Contact::execute_curl($function, $data));
         }
 
-        private static function execute_curl($hook, $data) {
-            $ch = curl_init($hook);
+        private static function execute_curl($function, $data) {
+            $ch = curl_init($function);
 
             curl_setopt_array($ch, array(
                 CURLOPT_SSL_VERIFYPEER => false,

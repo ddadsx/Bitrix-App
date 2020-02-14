@@ -3,15 +3,7 @@
     require_once('models/Companies.php');
     require_once('models/Deals.php');
     
-    define('CONTACT_ADD_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.contact.add.json');
-    define('CONTACT_LIST_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.contact.list.json');
-    define('CONTACT_UPDATE_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.contact.update.json');
-    define('CONTACT_DELETE_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.contact.delete.json');
-    define('CONTACT_ADD_COMPANY_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.contact.company.add.json');
-    define('COMPANY_ADD_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.company.add.json');
-    define('COMPANY_LIST_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.company.list.json');
-    define('COMPANY_DELETE_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.company.delete.json');
-    define('COMPANY_ADD_CONTACT_HOOK', 'https://b24-o10r3l.bitrix24.com.br/rest/1/015ap0dmalp0n2jd/crm.company.contact.add.json');
+    require_once('Hook.php');
     
     class Controller{
         private $id = '';
@@ -97,21 +89,22 @@
                 $contact = new Contact($_POST['name'], $_POST['lastname'],$_POST['cpf'],$_POST['tel'],$_POST['email'],$_POST['cnpj']);
                 $company = new Company($_POST['companyName'],$_POST['cnpj']);
 
-                $ret = Contact::find(CONTACT_LIST_HOOK,$_POST['cpf']);
+                $ret = Contact::findByCpf($_POST['cpf']);
                 if(count($ret->result) == 0){
 
-                    $retCompany = Company::find(COMPANY_LIST_HOOK,$_POST['cnpj']);
+                    $retCompany = Company::findByCnpj($_POST['cnpj']);
                     //var_dump($retCompany);
                     //var_dump(' ');
                     if(count($retCompany->result) == 0){
-                        $retCompany = $company->save(COMPANY_ADD_HOOK);
+                        $retCompany = $company->save();
                         $companyId = strval($retCompany->result);
                     }
                     else $companyId = $retCompany->result[0]->ID;
 
-                    $ret = $contact->save(CONTACT_ADD_HOOK);
-                    $contact->addCompany(CONTACT_ADD_COMPANY_HOOK,strval($ret->result),$companyId);
-                    $company->addContact(COMPANY_ADD_CONTACT_HOOK,$companyId,strval($ret->result));
+                    $ret = $contact->save();
+                    
+                    $contact->addCompany(strval($ret->result),$companyId);
+                    $company->addContact($companyId,strval($ret->result));
 
                     $this->msg = "<h2>AVISO</h2><br/><p>O contato foi salvo com sucesso.</p>";
                     $this->msg_class = 'message-success';
@@ -143,7 +136,7 @@
 
         function update(){
             $contact = new Contact($_POST['name'], $_POST['lastname'],$_POST['cpf'],$_POST['tel'],$_POST['email'],$_POST['cnpj']);
-            $contact->update(CONTACT_UPDATE_HOOK,$_POST['id']);
+            $contact->update($_POST['id']);
             $this->msg = "<h2>AVISO</h2><br/><p>O contato foi atualizado com sucesso.</p>";
             $this->msg_class = 'message-success';
             require('views/index.php');
@@ -151,12 +144,12 @@
 
         function delete($id,$op){
             if(!strcmp($op,'del-company')){
-                $ret = Company::delete(COMPANY_DELETE_HOOK,$id);
+                $ret = Company::delete($id);
                 $this->msg = "<h2>AVISO</h2><br/><p>A empresa foi removida com sucesso.</p>";
                 $this->msg_class = 'message-success';
             }
             else{
-                $ret = Contact::delete(CONTACT_DELETE_HOOK,$id);
+                $ret = Contact::delete($id);
                 $this->msg = "<h2>AVISO</h2><br/><p>O contato foi removido com sucesso.</p>";
                 $this->msg_class = 'message-success';
             }
@@ -169,12 +162,12 @@
         }
 
         function listContact(){
-            $ret = Contact::findAll(CONTACT_LIST_HOOK);
+            $ret = Contact::findAll();
             require('views/list.php');
         }
 
         function listCompany(){
-            $ret = Company::findAll(COMPANY_LIST_HOOK);
+            $ret = Company::findAll();
             require('views/list-company.php');
         }
     } 

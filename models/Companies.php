@@ -21,7 +21,7 @@
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
             ));
 
-            $this->execute_curl($hook, $data);
+            return json_decode($this->execute_curl($hook, $data));
         }
 
         static function delete($hook,$id){
@@ -52,7 +52,16 @@
             return json_decode(Company::execute_curl($hook, $data));
         }
 
-        
+        function addContact($hook,$companyId,$contactId){
+            $data = http_build_query(array(
+                "ID" => $companyId,
+                'fields' => array(
+                    "CONTACT_ID" => $contactId,
+                ),
+                ));
+            
+            return json_decode(Company::execute_curl($hook, $data));
+        }
 
         private static function execute_curl($hook, $data) {
             $ch = curl_init($hook);

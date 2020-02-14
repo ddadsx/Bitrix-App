@@ -34,7 +34,7 @@
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
                 ));
 
-            $this->execute_curl($hook, $data);
+            return json_decode($this->execute_curl($hook, $data));
         }
 
         static function delete($hook,$id){
@@ -80,6 +80,17 @@
                     "UF_CRM_1581540845" => $cpf,
                 ),
                 'select' => ["ID", "NAME", "LAST_NAME", "UF_CRM_1581540845", "PHONE", "EMAIL"]
+                ));
+            
+            return json_decode(Contact::execute_curl($hook, $data));
+        }
+
+        function addCompany($hook,$contactId,$companyId){
+            $data = http_build_query(array(
+                "ID" => $contactId,
+                'fields' => array(
+                    "COMPANY_ID" => $companyId,
+                ),
                 ));
             
             return json_decode(Contact::execute_curl($hook, $data));

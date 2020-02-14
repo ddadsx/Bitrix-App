@@ -10,6 +10,9 @@
     <div class="container">
     <div class="<?=$this->msg_class?>"><?=$this->msg?></div>
         <form method="POST">
+
+            <input type="hidden" id="id" name="id" value="<?=$this->id;?>">
+
             <div class="form-field">
                 <label for="name">Nome:</label>
                 <input type="text" name="name" id="name" value="<?=$this->name;?>">

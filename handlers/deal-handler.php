@@ -4,7 +4,7 @@
         var_dump($str);
         $debug_dump = ob_get_clean();
 
-        $myFile = fopen("../dump.txt", "a");
+        $myFile = fopen("../dump.txt", "w");
         fwrite($myFile,$debug_dump);
         fclose($myFile);
     }
@@ -13,12 +13,13 @@
         require_once('../models/Deals.php');
         require_once('../models/Companies.php');
 
-        if($_REQUEST['event'] == "ONCRMDEALADD") {
+        log_dump($_REQUEST);              
+        if(($_REQUEST['event'] == "ONCRMDEALADD") or ($_REQUEST['event'] == "ONCRMDEALUPDATE")) {
             $ret = Deal::find($_REQUEST['data']['FIELDS']['ID']);            
             if ($ret->result->STAGE_ID == "WON"){
                 $companyId = $ret->result->COMPANY_ID;
                 $amount = $ret->result->OPPORTUNITY;
-                $ret = Company::addRevenue($companyId,$amount);              
+                $ret = Company::addRevenue($companyId,$amount);
             }
         }
     }

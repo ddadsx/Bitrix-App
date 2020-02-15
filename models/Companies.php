@@ -1,4 +1,6 @@
 <?php
+    require_once('Hook.php');
+
     class Company {
         private $companyName;
         private $cnpj;
@@ -59,12 +61,9 @@
         }
 
         static function findById($id){
-            $function = HOOK.'crm.company.list.json';
+            $function = HOOK.'crm.company.get.json';
             $data = http_build_query(array(
-                'filter' => array(
-                    "ID" => $id,
-                ),
-                'select' => ["ID", "TITLE", "BANKING_DETAILS", "REVENUE"]
+                    "ID" => $id
                 ));
             
             return json_decode(Company::execute_curl($function, $data));
@@ -82,10 +81,22 @@
             return json_decode(Company::execute_curl($function, $data));
         }
 
+        static function removeContact($companyId,$contactId){
+            $function = HOOK.'crm.company.contact.delete.json';
+            $data = http_build_query(array(
+                "ID" => $companyId,
+                'fields' => array(
+                    "CONTACT_ID" => $contactId,
+                ),
+                ));
+            
+            return json_decode(Company::execute_curl($function, $data));
+        }
+
         static function addRevenue($companyId,$amount){
             $ret = Company::findById($companyId);
 
-            $amount += floatval($ret->result[0]->REVENUE);
+            $amount += floatval($ret->result->REVENUE);
 
             $function = HOOK.'crm.company.update.json';
             $data = http_build_query(array(

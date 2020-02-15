@@ -3,8 +3,6 @@
     require_once('models/Companies.php');
     require_once('models/Deals.php');
     
-    require_once('Hook.php');
-    
     class Controller{
         private $id = '';
         private $name = '';
@@ -16,7 +14,7 @@
         private $cnpj = '';
 
         private $msg_class = 'message-hidden';
-        private $update = 'btn-hidden';
+        private $update_class = 'btn-hidden';
         
         private $msg = '';
 
@@ -30,30 +28,34 @@
             switch ($op) {
                 case 'save':
                     $this->save();
-                    break;
+                break;
                 case 'update':
                     $this->update();
-                    break;
+                break;
                 case 'del':
                     if(isset($_GET['id']))
                         $this->delete($_GET['id'],$op);
-                    break;
+                break;
+                case 'fill-form':
+                    if(isset($_GET['id']))
+                        $this->fillForm($_GET['id'],$op);
+                break;
                 case 'del-company':
                     if(isset($_GET['id']))
                         $this->delete($_GET['id'],$op);
-                    break;
+                break;
                 case 'form':
                     $this->form();
-                    break;
+                break;
                 case 'list-contact':
                     $this->listContact();
-                    break;
+                break;
                 case 'list-company':
                     $this->listCompany();
-                    break;                
+                break;                
                 default:
                     $this->index();
-                    break;
+                break;
             }
         }
 
@@ -92,13 +94,12 @@
                 if(count($ret->result) == 0){
 
                     $retCompany = Company::findByCnpj($_POST['cnpj']);
-                    //var_dump($retCompany);
-                    //var_dump(' ');
                     if(count($retCompany->result) == 0){
                         $retCompany = $company->save();
                         $companyId = strval($retCompany->result);
                     }
                     else $companyId = $retCompany->result[0]->ID;
+                        
 
                     $ret = $contact->save();
 
@@ -122,7 +123,7 @@
                     $this->companyName = $_POST['companyName'];
                     $this->cnpj = $_POST['cnpj'];
                     
-                    $this->update = 'btn-show';
+                    $this->update_class = 'btn-show';
                     
 
                     require('views/form.php');
@@ -133,9 +134,54 @@
             }
         }
 
+        function fillForm($id){
+            $contact = Contact::findById($id);
+            $company = Company::findById($contact->result->COMPANY_ID);
+
+            
+            $this->id = $id;
+            $this->name = $contact->result->NAME;
+            $this->lastname = $contact->result->LAST_NAME;
+            $this->email = $contact->result->EMAIL[0]->VALUE;
+            $this->tel = $contact->result->PHONE[0]->VALUE;
+            $this->cpf = $contact->result->UF_CRM_1581540845;
+            $this->companyName = array_key_exists('error',(array)$company) ? '' : $company->result->TITLE;
+            $this->cnpj = array_key_exists('error',(array)$company) ? '' :  $company->result->BANKING_DETAILS;
+            
+            $this->update_class = 'btn-show';
+            
+
+            require('views/form.php');
+        }
+
         function update(){
             $contact = new Contact($_POST['name'], $_POST['lastname'],$_POST['cpf'],$_POST['tel'],$_POST['email'],$_POST['cnpj']);
-            $contact->update($_POST['id']);
+
+            $ret = Company::findByCnpj($_POST['cnpj']);
+            if(!count($ret->result)){
+                $company = new Company($_POST['companyName'],$_POST['cnpj']);
+                $retCompany = $company->save();
+                $companyId = strval($retCompany->result);
+                $contact->update($_POST['id']);
+
+                Contact::removeCompany($_POST['id'],$companyId);
+                $contact->addCompany($_POST['id'],$companyId);
+
+                Company::removeContact($companyId,$_POST['id']);
+                $company->addContact($companyId,$_POST['id']);
+            }
+            else {
+                $company = new Company($_POST['companyName'],$_POST['cnpj']);
+
+                $companyId = $ret->result[0]->ID;
+                $contact->update($_POST['id']);
+
+                Contact::removeCompany($_POST['id'],$companyId);
+                $contact->addCompany($_POST['id'],$companyId);
+
+                Company::removeContact($companyId,$_POST['id']);
+                $company->addContact($companyId,$_POST['id']);
+            }
             $this->msg = "<h2>AVISO</h2><br/><p>O contato foi atualizado com sucesso.</p>";
             $this->msg_class = 'message-success';
             require('views/index.php');
@@ -161,7 +207,8 @@
         }
 
         function listContact(){
-            $ret = Contact::findAll();
+            $contact = Contact::findAll();
+            $company = Company::findAll();
             require('views/list.php');
         }
 

@@ -51,7 +51,7 @@
             <div class="buttons">
                 <button class="btn" type="submit" formaction="?op=save" name="process_form">Enviar</button>
                 <button class="btn" type="submit" formaction="?op=index" name="index">Voltar</button>
-                <button class="btn <?=$this->update;?>"type="submit" formaction="?op=update" name="update_contact">Atualizar</button>
+                <button class="btn <?=$this->update_class;?>"type="submit" formaction="?op=update" name="update_contact">Atualizar</button>
             </div>
 
         </form>

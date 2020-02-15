@@ -1,4 +1,5 @@
 <?php
+    require_once('Hook.php');
 
     class Contact{
         private $name = '';
@@ -72,7 +73,7 @@
             $function = HOOK.'crm.contact.list.json';
             $data = http_build_query(array(
                 'filter' => array(),
-                'select' => ["ID", "NAME", "LAST_NAME", "UF_CRM_1581540845", "PHONE", "EMAIL"]
+                'select' => ["ID", "NAME", "LAST_NAME", "UF_CRM_1581540845", "PHONE", "EMAIL", "COMPANY_ID"]
                 ));
             
             return json_decode(Contact::execute_curl($function, $data));
@@ -90,8 +91,29 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        static function findByID($id){
+            $function = HOOK.'crm.contact.get.json';
+            $data = http_build_query(array(
+                "ID" => $id
+            ));
+            
+            return json_decode(Contact::execute_curl($function, $data));
+        }
+
         function addCompany($contactId,$companyId){
             $function = HOOK.'crm.contact.company.add.json';
+            $data = http_build_query(array(
+                "ID" => $contactId,
+                'fields' => array(
+                    "COMPANY_ID" => $companyId,
+                ),
+                ));
+            
+            return json_decode(Contact::execute_curl($function, $data));
+        }
+
+        static function removeCompany($contactId,$companyId){
+            $function = HOOK.'crm.contact.company.delete.json';
             $data = http_build_query(array(
                 "ID" => $contactId,
                 'fields' => array(

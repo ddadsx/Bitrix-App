@@ -1,7 +1,7 @@
 <?php
     class Company {
         private $companyName;
-        private$cnpj;
+        private $cnpj;
 
         function __construct($companyName,$cnpj){
             $this->companyName = $companyName;
@@ -17,6 +17,7 @@
                     "ASSIGNED_BY_ID" => 1,
                     "SOURCE_ID" => "SELF",
                     "BANKING_DETAILS" => $this->cnpj,
+                    "REVENUE" => "0.0",
                     "COMMENTS" => "CPNJ: ".$this->cnpj
                 ),
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
@@ -81,11 +82,19 @@
         }
 
         static function addRevenue($companyId,$amount){
-            //Company::findById()
+            $ret = Company::findById($companyId);
 
-            //buscar empresa por id, para receber o revenue atual
-            //somar o amount com o revenue 
-            //atualizar revenue da empresa
+            $amount += floatval($ret->result[0]->REVENUE);
+
+            $function = HOOK.'crm.company.update.json';
+            $data = http_build_query(array(
+                "ID" => $companyId,
+                'fields' => array(
+                    "REVENUE" => $amount
+                )
+            ));
+            
+            return json_decode(Company::execute_curl($function, $data));
         }
 
         private static function execute_curl($function, $data) {

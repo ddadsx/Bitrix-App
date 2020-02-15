@@ -163,6 +163,7 @@ table {
 
 th, td {
     padding: 0.8em;
+    max-width: 10em;
 }
 
 .delete-btn {

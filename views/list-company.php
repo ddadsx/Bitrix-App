@@ -19,14 +19,14 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>CNPJ</th>
+                <th>Faturamento</th>
             </tr>
             <?php
                 if(isset($ret)) {
                     foreach($ret->result as $key=>$value){
-                        print('<tr><th>'.$value->ID.'</th><th>'.$value->TITLE.'</th><th>'.$value->BANKING_DETAILS.'</th><th><a class="delete-btn" href="?op=del-company&id='.$value->ID.'">X</a></th></tr>');
+                        print('<tr><th>'.$value->ID.'</th><th>'.$value->TITLE.'</th><th>'.$value->BANKING_DETAILS.'</th><th>'.$value->REVENUE.'</th><th><a class="delete-btn" href="?op=del-company&id='.$value->ID.'">X</a></th></tr>');
                     }
                 }
-                //print(count($ret->result));
             ?>
         </table>
         <?php

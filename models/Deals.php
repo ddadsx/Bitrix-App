@@ -7,8 +7,7 @@
             $function = HOOK.'crm.deal.list.json';
 
             $data = http_build_query(array(
-                "fields" => array(
-                    //"STAGE_ID"=> "WON", 					
+                "fields" => array(					
                     "ID" => $id,
                 ),
                 "select" => ["ID", "TITLE", "OPPORTUNITY", "COMPANY_ID", "STAGE_ID"]));

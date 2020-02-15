@@ -12,17 +12,13 @@
     if(isset($_REQUEST)){
         require_once('../models/Deals.php');
         require_once('../models/Companies.php');
-        //log_dump($_REQUEST);
 
         if($_REQUEST['event'] == "ONCRMDEALADD") {
-            $ret = Deal::find($_REQUEST['data']['FIELDS']['ID']);
-            
-            if ($ret->result[count($ret->result)-1]->STAGE_ID == "WON"){
-                $companyId = $ret->result[count($ret->result)-1]->COMPANY_ID;
-                $amount = $ret->result[count($ret->result)-1]->OPPORTUNITY;
-
-                $ret = Company::addRevenue($companyId,$amount);  
-                log_dump($ret);              
+            $ret = Deal::find($_REQUEST['data']['FIELDS']['ID']);            
+            if ($ret->result->STAGE_ID == "WON"){
+                $companyId = $ret->result->COMPANY_ID;
+                $amount = $ret->result->OPPORTUNITY;
+                $ret = Company::addRevenue($companyId,$amount);              
             }
         }
     }

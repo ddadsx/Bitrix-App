@@ -4,14 +4,11 @@
     class Deal{
 
         static function find($id){
-            $function = HOOK.'crm.deal.list.json';
+            $function = HOOK.'crm.deal.get.json';
 
-            $data = http_build_query(array(
-                "fields" => array(					
-                    "ID" => $id,
-                ),
-                "select" => ["ID", "TITLE", "OPPORTUNITY", "COMPANY_ID", "STAGE_ID"]));
-            
+            $data = http_build_query(array(					
+                "ID" => $id
+            ));
             return json_decode(Deal::execute_curl($function, $data));
         }
 

@@ -17,6 +17,7 @@
                     "ASSIGNED_BY_ID" => 1,
                     "SOURCE_ID" => "SELF",
                     "BANKING_DETAILS" => $this->cnpj,
+                    "CURRENCY_ID" => "BRL",
                     "REVENUE" => "0.0",
                     "COMMENTS" => "CPNJ: ".$this->cnpj
                 ),

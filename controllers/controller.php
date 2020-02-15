@@ -50,14 +50,13 @@
                     break;
                 case 'list-company':
                     $this->listCompany();
-                    break;
-                
+                    break;                
                 default:
                     $this->index();
                     break;
             }
         }
-        
+
         public function index(){
             require('views/index.php');
         }
@@ -102,7 +101,7 @@
                     else $companyId = $retCompany->result[0]->ID;
 
                     $ret = $contact->save();
-                    
+
                     $contact->addCompany(strval($ret->result),$companyId);
                     $company->addContact($companyId,strval($ret->result));
 

@@ -1,5 +1,5 @@
 # Introdução
-Este projeto é composto de um CRUD MVC em PHP integrado ao sistema Bitrix através de webhooks, e lida com as entidades Contatos e Empresas. Além de oferecer um event listener para lidar com Negócios Ganhos quando da criação ou atualização da entidde Negócios.
+Este projeto é composto de um CRUD MVC em PHP integrado ao sistema Bitrix através de webhooks, e lida com as entidades Contatos e Empresas. Além de oferecer um event listener para lidar com Negócios Ganhos quando da criação ou atualização da entidade Negócios.
 
 ---
 
@@ -47,10 +47,12 @@ bitrix-app
 │   ├───Deals.php
 │   └───Hook.php
 │
+├───public
+│   ├───refresh.png
+│   └───trash.png
+│
 └───views
     ├───form.php
     ├───index.php
-    ├───list-company.php
-    ├───list.php
-    └───message.php
+    └───list.php
 ```

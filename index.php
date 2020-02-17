@@ -1,9 +1,8 @@
 <?php
 
-require_once 'controllers/controller.php';
+    require_once('controllers/controller.php');
 
-$controller = new Controller();
-
-$controller->init();
+    $controller = new Controller();
+    $controller->init();
 
 ?>

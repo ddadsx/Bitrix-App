@@ -1,8 +1,18 @@
 <?php
     require_once('Hook.php');
     
+    /**
+     * Classe contendo a lógica de manipulação da entidade Negócio.
+     * Utilizada apenas pelo webhook de saída
+     * 
+     * @author Douglas Silva
+     */
     class Deal{
 
+        /**
+         * Busca um Negócio pelo ID
+         * @param string ID do Negócio
+         */
         static function find($id){
             $function = HOOK.'crm.deal.get.json';
 
@@ -12,6 +22,12 @@
             return json_decode(Deal::execute_curl($function, $data));
         }
 
+        /**
+         * Executa o cURL para fazer acesso à API do Bitrix
+         * 
+         * @param string URL da API específica para cada função executada
+         * @param array Dados a serem enviados ao sistema Bitrix
+         */
         private static function execute_curl($function, $data) {
             $ch = curl_init($function);
 

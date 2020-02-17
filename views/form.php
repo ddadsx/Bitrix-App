@@ -8,7 +8,8 @@
 </head>
 <body>
     <div class="container">
-    <div class="<?=$this->msg_class?>"><?=$this->msg?></div>
+        <div class="form-header">CADASTRO DE CONTATOS</div>
+        <div class="<?=$this->msg_class?>"><?=$this->msg?></div>
         <form method="POST">
 
             <input type="hidden" id="id" name="id" value="<?=$this->id;?>">

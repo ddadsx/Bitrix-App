@@ -1,6 +1,11 @@
 <?php
     require_once('Hook.php');
 
+    /**
+     * Classe contendo toda lógica de manipulação da entidade Contato
+     * 
+     * @author Douglas Silva
+     */
     class Contact{
         private $name = '';
         private $lastname = '';
@@ -18,6 +23,9 @@
             $this->cnpj = $cnpj;
         }
 
+        /**
+         * Salva o contato no sistema Bitrix
+         */
         function save(){
             $function = HOOK.'crm.contact.add.json';
             $data = http_build_query(array(
@@ -36,18 +44,14 @@
                 'params' => array("REGISTER_SONET_EVENT" => "Y")
                 ));
 
-            return json_decode($this->execute_curl($function, $data));
-        }
-
-        static function delete($id){
-            $function = HOOK.'crm.contact.delete.json';
-            $data = http_build_query(array(
-                "ID" => $id,
-                ));
-            
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Atualiza os dados do contato
+         * 
+         * @param string ID do contato que será atualizado
+         */
         function update($id){
             $function = HOOK.'crm.contact.update.json';
             $data = http_build_query(array(
@@ -69,6 +73,23 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Remove o contato do sistema
+         * 
+         * @param string ID do contato que será removido
+         */
+        static function delete($id){
+            $function = HOOK.'crm.contact.delete.json';
+            $data = http_build_query(array(
+                "ID" => $id,
+                ));
+            
+            return json_decode(Contact::execute_curl($function, $data));
+        }
+
+        /**
+         * Lista todos os contatos cadastrados
+         */
         static function findAll(){
             $function = HOOK.'crm.contact.list.json';
             $data = http_build_query(array(
@@ -79,6 +100,11 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Procura um contato específico pelo CPF
+         * 
+         * @param string CPF
+         */
         static function findByCpf($cpf){
             $function = HOOK.'crm.contact.list.json';
             $data = http_build_query(array(
@@ -91,6 +117,11 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Procura um contato específico pelo ID interno
+         * 
+         * @param string ID
+         */
         static function findByID($id){
             $function = HOOK.'crm.contact.get.json';
             $data = http_build_query(array(
@@ -100,7 +131,13 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
-        function addCompany($contactId,$companyId){
+        /**
+         * Adiciona o contato a uma empresa específica
+         * 
+         * @param string ID do contato
+         * @param string ID da empresa
+         */
+        static function addCompany($contactId,$companyId){
             $function = HOOK.'crm.contact.company.add.json';
             $data = http_build_query(array(
                 "ID" => $contactId,
@@ -112,6 +149,12 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Remove o contato de uma empresa específica
+         * 
+         * @param string ID do contato
+         * @param string ID da empresa
+         */
         static function removeCompany($contactId,$companyId){
             $function = HOOK.'crm.contact.company.delete.json';
             $data = http_build_query(array(
@@ -124,6 +167,12 @@
             return json_decode(Contact::execute_curl($function, $data));
         }
 
+        /**
+         * Executa o cURL para fazer acesso à API do Bitrix
+         * 
+         * @param string URL da API específica para cada função executada
+         * @param array Dados a serem enviados ao sistema Bitrix
+         */
         private static function execute_curl($function, $data) {
             $ch = curl_init($function);
 

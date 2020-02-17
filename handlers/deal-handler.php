@@ -1,19 +1,15 @@
 <?php
-    function log_dump($str){
-        ob_start();
-        var_dump($str);
-        $debug_dump = ob_get_clean();
 
-        $myFile = fopen("../dump.txt", "w");
-        fwrite($myFile,$debug_dump);
-        fclose($myFile);
-    }
-
+    /**
+     * Ao receber uma requisição, busca o Negócio pelo ID e caso ele tenha sido ganho,
+     * o seu valor é somado à Empresa em questão
+     * 
+     * @author Douglas Silva
+     */
     if(isset($_REQUEST)){
         require_once('../models/Deals.php');
         require_once('../models/Companies.php');
-
-        log_dump($_REQUEST);              
+            
         if(($_REQUEST['event'] == "ONCRMDEALADD") or ($_REQUEST['event'] == "ONCRMDEALUPDATE")) {
             $ret = Deal::find($_REQUEST['data']['FIELDS']['ID']);            
             if ($ret->result->STAGE_ID == "WON"){
